@@ -1,0 +1,34 @@
+extends layout
+
+block content
+  h1 New Book
+  include error
+  form(method="POST")
+    p
+      label(for="title") Title
+      if (book)
+        input(name="title" type="text" id="title" value=book.title)
+      else
+        input(name="title" type="text" id="title")
+    p
+      label(for="author") Author
+      if (book)
+        input(name="author" type="text" id="author" value=book.author)
+      else
+        input(name="author" type="text" id="author")
+    p
+      label(for="genre") Genre
+      if (book)
+        input(name="genre" type="text" id="genre" value=book.genre)
+      else
+        input(name="genre" type="text" id="genre")
+    p
+      label(for="year") Year
+      if (book)
+        input(name="year" type="text" id="year" value=book.year)
+      else
+        input(name="year" type="text" id="year")
+    p
+      input(type="submit" value="Create New Book")
+    p
+      a.button(href="/books") Cancel

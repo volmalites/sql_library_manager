@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  if(error)
+    h1= `Server Error, ${message}`
+    p Sorry, there was an unexpected error on the server
+  if(errors)
+    h2.errors(style="color:red") Oooooops!
+    ul.errors
+      each error in errors
+        li(style="color:red")
+          = `${error.path.charAt(0).toUpperCase() + error.path.slice(1)} is required`
