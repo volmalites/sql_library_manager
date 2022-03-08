@@ -13,7 +13,7 @@ const sequelize = require('./models').sequelize;
 (async () => {
   try {
     await sequelize.authenticate();
-    await sequelize.sync({ force: true });
+    await sequelize.sync({ force: false });
     console.log('Connection has been established successfully.');
   } catch (error) {
     console.error('Unable to connect to the database:', error);
@@ -47,8 +47,15 @@ app.use(function(err, req, res, next) {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  if (err.status === 404) {
+    let error = new Error();
+    error.status = 404;
+    error.message = 'Sorry! We couldn`t find the page you were looking for';
+    res.render('page-not-found', { error });
+  } else {
+    res.status(err.status || 500);
+    res.render('error');
+  }
 });
 
 module.exports = app;

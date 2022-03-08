@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var Book = require('../models').Book;
+const { Op } = require('sequelize'); //SQL operators
 
 /* Async handler from Treehouse. */
 function asyncHandler(cb){
@@ -32,8 +33,54 @@ router.get('/', asyncHandler(async (req, res, next) => {
 }));
 
 /* Shows the full list of books */
-router.get('/books', asyncHandler(async (req, res, next) => {
-  const books = await Book.findAll();
+router.get('/books/:offset?/:page?', asyncHandler(async (req, res, next) => {
+  const offset = (req.params.offset) ? req.params.offset : 0;
+  console.log(offset);
+  const books = await Book.findAndCountAll({
+    limit: 5,
+    offset: offset
+  });
+  if (books) {
+    books.pages = Math.ceil(books.count / 5);
+    books.activePage = (req.params.page) ? req.params.page : 1;
+    res.render('books', { books });
+  } else {
+    let error = new Error();
+    error.status = 404;
+    error.message = 'Sorry! We couldn`t find the page you were looking for';
+    res.render('page-not-found', { error });
+  }
+}));
+
+/* Search for a book. */
+router.post('/books', asyncHandler(async (req, res, next) => {
+  console.log(req.body);
+  const books = await Book.findAll({
+    where: {
+      [Op.or]: [
+        {
+          title: {
+            [Op.like]: '%' + req.body.search + '%'
+          }
+        },
+        {
+          author: {
+            [Op.like]: '%' + req.body.search + '%'
+          }
+        },
+        {
+          genre: {
+            [Op.like]: '%' + req.body.search + '%'
+          }
+        },
+        {
+          year: {
+            [Op.like]: '%' + req.body.search + '%'
+          }
+        }
+      ]
+    }
+  });
   if (books) {
     res.render('books', { books });
   } else {

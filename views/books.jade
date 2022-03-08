@@ -4,16 +4,33 @@ block content
   h1 Books
   p
     a.button(href="/books/new") Create New Book
+  br
+  br
+  form(method="POST" action="/books")
+    label(for="title") Search:
+    input(name="search" type="text")
+    input(type="submit" value="Search")
+  br
+  br
   table
     tr
       th Title
       th Author
       th Genre
       th Year
-    each book in books
+    each book in books.rows
       tr
         td
           a(href=`/books/${book.id}`)= book.title
         td= book.author
         td= book.genre
         td= book.year
+  br
+  br
+  div.pagination
+    - for (let i = 1; i <= books.pages; i++) {
+      if(books.activePage == i)
+        a.active(href=`/books/${((i - 1) * 5) + '/' + (i)}`) #{i}
+      else
+        a(href=`/books/${((i - 1) * 5) + '/' + (i)}`) #{i}
+    - }
