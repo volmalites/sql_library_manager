@@ -61,7 +61,7 @@ router.get('/books/:id', asyncHandler(async (req, res, next) => {
     let error = new Error();
     error.status = 404;
     error.message = 'Sorry! We couldn`t find the page you were looking for';
-    res.render('page-not-found', { error });
+    throw error;
   }
 }));
 
